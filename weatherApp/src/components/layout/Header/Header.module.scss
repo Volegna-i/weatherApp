@@ -1,0 +1,45 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  background: var(--header-bg);
+  transition: all 0.3s;
+
+  :global {
+    .ant-layout-header {
+      background: inherit;
+    }
+  }
+}
+
+.logo {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-color);
+}
+
+:global {
+  [data-theme='light'] {
+    --header-bg: #fff;
+    --text-color: rgba(0, 0, 0, 0.85);
+  }
+
+  [data-theme='dark'] {
+    --header-bg: #141414;
+    --text-color: rgba(255, 255, 255, 0.85);
+  }
+}

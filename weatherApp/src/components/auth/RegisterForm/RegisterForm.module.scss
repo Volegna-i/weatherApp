@@ -1,0 +1,46 @@
+.registerContainer {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+
+  &[data-theme='light'] {
+    background-color: #f0f2f5;
+  }
+
+  &[data-theme='dark'] {
+    background-color: #141414;
+  }
+
+  :global {
+    .ant-card {
+      width: 400px;
+      transition: all 0.3s;
+
+      [data-theme='dark'] & {
+        background-color: #1f1f1f;
+        border-color: #434343;
+      }
+    }
+
+    .ant-typography {
+      text-align: center;
+      transition: color 0.3s;
+
+      [data-theme='dark'] & {
+        color: rgba(255, 255, 255, 0.85);
+      }
+    }
+  }
+}
+
+.loginLink {
+  display: block;
+  text-align: center;
+  margin-top: 16px;
+
+  a {
+    margin-left: 4px;
+  }
+}
