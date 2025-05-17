@@ -42,19 +42,14 @@ export const getWeatherData = async (days: number): Promise<WeatherData[]> => {
       }
     );
 
-    console.log("API Response:", response.data); // Посмотрим что приходит
-
     const mappedData = response.data.list.map((item) => ({
       dt: item.dt * 1000,
       temp: Math.round(item.main.temp * 10) / 10,
       humidity: item.main.humidity,
     }));
 
-    console.log("Mapped data:", mappedData); // Проверим преобразованные данные
-
     return mappedData;
   } catch (err) {
-    console.error("Weather API Error:", err); // Детальный лог ошибки
     throw new Error(
       err instanceof Error ? err.message : "Ошибка запроса погодных данных"
     );
