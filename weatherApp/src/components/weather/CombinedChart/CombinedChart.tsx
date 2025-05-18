@@ -1,8 +1,9 @@
 import { Card, Spin, Select, Space, Checkbox } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import { format } from "date-fns";
-import { Chart } from "react-chartjs-2";
-import type { ChartData, ChartDataset } from "chart.js";
+import { Chart as ReactChart } from "react-chartjs-2";
+import type { ChartData, ChartDataset, Chart } from "chart.js";
+import { useRef, useEffect } from "react";
 import type { RootState } from "../../../store/store";
 import { useTheme } from "../../../hooks/useTheme";
 import type { ChartType } from "../../../types/chart.types";
@@ -20,12 +21,21 @@ import styles from "./CombinedChart.module.scss";
 const { Option } = Select;
 
 export const CombinedChart = () => {
+  const chartRef = useRef<Chart<ChartType> | null>(null);
   const { themeMode } = useTheme();
   const dispatch = useDispatch();
   const { data, loading } = useSelector((state: RootState) => state.weather);
   const { chartType, movingAveragePeriod, visibleDatasets } = useSelector(
     (state: RootState) => state.chart
   );
+
+  useEffect(() => {
+    return () => {
+      if (chartRef.current) {
+        chartRef.current.destroy();
+      }
+    };
+  }, []);
 
   const temperatures = data.map((item) => item.temp);
   const movingAverageData = calculateMovingAverage(
@@ -50,7 +60,11 @@ export const CombinedChart = () => {
     datasets,
   };
 
-  const options = getCombinedChartOptions({ themeMode, visibleDatasets });
+  const options = {
+    ...getCombinedChartOptions({ themeMode, visibleDatasets }),
+    maintainAspectRatio: false,
+    responsive: true,
+  };
 
   const renderChart = () => {
     if (loading) {
@@ -61,7 +75,20 @@ export const CombinedChart = () => {
       );
     }
 
-    return <Chart type={chartType} options={options} data={chartData} />;
+    return (
+      <div className={styles.chartWrapper}>
+        <ReactChart
+          ref={(ref) => {
+            if (ref) {
+              chartRef.current = ref;
+            }
+          }}
+          type={chartType}
+          options={options}
+          data={chartData}
+        />
+      </div>
+    );
   };
 
   return (

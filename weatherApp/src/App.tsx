@@ -77,7 +77,11 @@ function App() {
                 {/* Редирект с главной */}
                 <Route
                   path="/"
-                  element={<Navigate to="/dashboard" replace />}
+                  element={
+                    <ProtectedRoute>
+                      <Navigate to="/dashboard" replace />
+                    </ProtectedRoute>
+                  }
                 />
 
                 {/* 404 для всех остальных маршрутов */}

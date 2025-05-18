@@ -1,5 +1,9 @@
 .chartCard {
   width: 100%;
+  min-height: 600px;
+  background-color: var(--background-color);
+  display: flex;
+  flex-direction: column;
 }
 
 .loadingContainer {
@@ -10,18 +14,31 @@
 }
 
 .chartHeader {
+  margin-bottom: 16px;
   display: flex;
   justify-content: flex-start;
-  align-items: center;
-  margin-bottom: 16px;
 }
 
 .chartTypeSelect {
-  width: 150px;
+  min-width: 120px;
 }
 
 .periodSelect {
-  width: 100px;
+  min-width: 100px;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 560px;
+}
+
+.chartWrapper {
+  position: relative;
+  flex: 1;
+  min-height: 600px;
+  width: 100%;
 }
 
 :global {
