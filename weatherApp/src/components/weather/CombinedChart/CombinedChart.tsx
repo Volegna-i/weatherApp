@@ -1,12 +1,19 @@
-import { Card, Spin, Select, Space } from "antd";
-import { useSelector } from "react-redux";
-import { useState } from "react";
+import { Card, Spin, Select, Space, Checkbox } from "antd";
+import { useSelector, useDispatch } from "react-redux";
+import { format } from "date-fns";
+import { Chart } from "react-chartjs-2";
+import type { ChartData, ChartDataset } from "chart.js";
 import type { RootState } from "../../../store/store";
 import { useTheme } from "../../../hooks/useTheme";
 import type { ChartType } from "../../../types/chart.types";
-import { ChartTypeEnum } from "../../../types/chart.types";
-import { TemperatureChart } from "../TemperatureChart";
-import { HistogramChart } from "../HistogramChart";
+import { calculateMovingAverage } from "../../../utils/chartUtils";
+import { getCombinedChartOptions } from "../chart.utils";
+import { getDatasets } from "../chart.datasets";
+import {
+  setChartType,
+  setMovingAveragePeriod,
+  toggleDatasetVisibility,
+} from "../../../store/chartSlice";
 import "../../../config/chartConfig";
 import styles from "./CombinedChart.module.scss";
 
@@ -14,9 +21,36 @@ const { Option } = Select;
 
 export const CombinedChart = () => {
   const { themeMode } = useTheme();
+  const dispatch = useDispatch();
   const { data, loading } = useSelector((state: RootState) => state.weather);
-  const [chartType, setChartType] = useState<ChartType>("line");
-  const [movingAveragePeriod, setMovingAveragePeriod] = useState(3);
+  const { chartType, movingAveragePeriod, visibleDatasets } = useSelector(
+    (state: RootState) => state.chart
+  );
+
+  const temperatures = data.map((item) => item.temp);
+  const movingAverageData = calculateMovingAverage(
+    temperatures,
+    movingAveragePeriod
+  );
+
+  const allDatasets = getDatasets({
+    data,
+    chartType,
+    movingAveragePeriod,
+    movingAverageData,
+  });
+
+  const datasets: ChartDataset<ChartType, number[]>[] = [];
+  if (visibleDatasets.temperature) datasets.push(allDatasets.temperature);
+  if (visibleDatasets.movingAverage) datasets.push(allDatasets.movingAverage);
+  if (visibleDatasets.humidity) datasets.push(allDatasets.humidity);
+
+  const chartData: ChartData<ChartType> = {
+    labels: data.map((item) => format(new Date(item.dt), "dd.MM HH:mm")),
+    datasets,
+  };
+
+  const options = getCombinedChartOptions({ themeMode, visibleDatasets });
 
   const renderChart = () => {
     if (loading) {
@@ -27,43 +61,55 @@ export const CombinedChart = () => {
       );
     }
 
-    return chartType === "line" ? (
-      <TemperatureChart
-        data={data}
-        themeMode={themeMode}
-        movingAveragePeriod={movingAveragePeriod}
-      />
-    ) : (
-      <HistogramChart
-        data={data}
-        themeMode={themeMode}
-        movingAveragePeriod={movingAveragePeriod}
-      />
-    );
+    return <Chart type={chartType} options={options} data={chartData} />;
   };
 
   return (
     <Card className={styles.chartCard}>
       <div className={styles.chartHeader}>
-        <Space>
-          <Select
-            value={chartType}
-            onChange={setChartType}
-            className={styles.chartTypeSelect}
-          >
-            <Option value={ChartTypeEnum.Line}>Линейный</Option>
-            <Option value={ChartTypeEnum.Bar}>Гистограмма</Option>
-          </Select>
-          <Select
-            value={movingAveragePeriod}
-            onChange={setMovingAveragePeriod}
-            className={styles.periodSelect}
-          >
-            <Option value={2}>MA(2)</Option>
-            <Option value={3}>MA(3)</Option>
-            <Option value={5}>MA(5)</Option>
-            <Option value={7}>MA(7)</Option>
-          </Select>
+        <Space direction="vertical">
+          <Space>
+            <Select
+              value={chartType}
+              onChange={(value) => dispatch(setChartType(value))}
+              className={styles.chartTypeSelect}
+            >
+              <Option value="line">Линейный</Option>
+              <Option value="bar">Гистограмма</Option>
+            </Select>
+            <Select
+              value={movingAveragePeriod}
+              onChange={(value) => dispatch(setMovingAveragePeriod(value))}
+              className={styles.periodSelect}
+            >
+              <Option value={2}>MA(2)</Option>
+              <Option value={3}>MA(3)</Option>
+              <Option value={5}>MA(5)</Option>
+              <Option value={7}>MA(7)</Option>
+            </Select>
+          </Space>
+          <Space>
+            <Checkbox
+              checked={visibleDatasets.temperature}
+              onChange={() => dispatch(toggleDatasetVisibility("temperature"))}
+            >
+              Температура
+            </Checkbox>
+            <Checkbox
+              checked={visibleDatasets.humidity}
+              onChange={() => dispatch(toggleDatasetVisibility("humidity"))}
+            >
+              Влажность
+            </Checkbox>
+            <Checkbox
+              checked={visibleDatasets.movingAverage}
+              onChange={() =>
+                dispatch(toggleDatasetVisibility("movingAverage"))
+              }
+            >
+              Скользящая средняя
+            </Checkbox>
+          </Space>
         </Space>
       </div>
       {renderChart()}

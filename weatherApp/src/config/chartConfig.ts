@@ -8,9 +8,9 @@ import {
   Title,
   Tooltip,
   Legend,
-  TimeScale,
-  TimeSeriesScale,
 } from "chart.js";
+
+import type { ChartType } from "chart.js";
 
 ChartJS.register(
   CategoryScale,
@@ -20,7 +20,11 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend,
-  TimeScale,
-  TimeSeriesScale
+  Legend
 );
+
+declare module "chart.js" {
+  interface ChartTypeRegistry {
+    derivedBarLine: ChartType;
+  }
+}
