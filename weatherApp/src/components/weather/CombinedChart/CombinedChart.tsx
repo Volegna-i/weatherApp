@@ -3,8 +3,9 @@ import { useSelector } from "react-redux";
 import { useState } from "react";
 import type { RootState } from "../../../store/store";
 import { useTheme } from "../../../hooks/useTheme";
-import { ChartType } from "../../../types/chart.types";
-import { TemperatureChart } from "../TemperatureChart/TemperatureChart";
+import type { ChartType } from "../../../types/chart.types";
+import { ChartTypeEnum } from "../../../types/chart.types";
+import { TemperatureChart } from "../TemperatureChart";
 import { HistogramChart } from "../HistogramChart";
 import "../../../config/chartConfig";
 import styles from "./CombinedChart.module.scss";
@@ -14,7 +15,7 @@ const { Option } = Select;
 export const CombinedChart = () => {
   const { themeMode } = useTheme();
   const { data, loading } = useSelector((state: RootState) => state.weather);
-  const [chartType, setChartType] = useState<ChartType>(ChartType.Line);
+  const [chartType, setChartType] = useState<ChartType>("line");
   const [movingAveragePeriod, setMovingAveragePeriod] = useState(3);
 
   const renderChart = () => {
@@ -26,7 +27,7 @@ export const CombinedChart = () => {
       );
     }
 
-    return chartType === ChartType.Line ? (
+    return chartType === "line" ? (
       <TemperatureChart
         data={data}
         themeMode={themeMode}
@@ -50,8 +51,8 @@ export const CombinedChart = () => {
             onChange={setChartType}
             className={styles.chartTypeSelect}
           >
-            <Option value={ChartType.Line}>Линейный</Option>
-            <Option value={ChartType.Bar}>Гистограмма</Option>
+            <Option value={ChartTypeEnum.Line}>Линейный</Option>
+            <Option value={ChartTypeEnum.Bar}>Гистограмма</Option>
           </Select>
           <Select
             value={movingAveragePeriod}

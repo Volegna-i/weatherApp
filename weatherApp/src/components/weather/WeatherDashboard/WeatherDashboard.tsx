@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { PeriodSelector } from "../../common/PeriodSelector/PeriodSelector";
 import { CombinedChart } from "../CombinedChart/CombinedChart";
+import { CombinedTempHumidityChart } from "../CombinedTempHumidityChart/CombinedTempHumidityChart";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { fetchWeatherData } from "../../../store/weatherSlice";
 import styles from "./WeatherDashboard.module.scss";
@@ -19,7 +20,10 @@ export const WeatherDashboard = () => {
         <h1>Данные о погоде в Москве</h1>
         <PeriodSelector value={selectedDays} onChange={setSelectedDays} />
       </div>
-      <CombinedChart />
+      <div className={styles.chartsContainer}>
+        <CombinedChart />
+        <CombinedTempHumidityChart />
+      </div>
     </div>
   );
 };

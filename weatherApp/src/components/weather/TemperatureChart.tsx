@@ -1,9 +1,9 @@
 import { Line } from "react-chartjs-2";
 import { format } from "date-fns";
-import type { WeatherData } from "../../../types/weather.types";
-import { getCommonChartOptions } from "../chart.utils";
-import { calculateMovingAverage } from "../../../utils/chartUtils";
-import "../../../config/chartConfig";
+import type { WeatherData } from "../../types/weather.types";
+import { getCommonChartOptions } from "./chart.utils";
+import { calculateMovingAverage } from "../../utils/chartUtils";
+import "../../config/chartConfig";
 
 interface TemperatureChartProps {
   data: WeatherData[];
