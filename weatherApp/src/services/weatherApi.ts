@@ -12,7 +12,7 @@ interface WeatherApiResponse {
 }
 
 const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
-const BASE_URL = "https://api.openweathermap.org/data/2.5";
+const BASE_URL = import.meta.env.VITE_OPENWEATHER_API_URL;
 
 const MOSCOW_LAT = 55.7558;
 const MOSCOW_LON = 37.6173;
@@ -20,14 +20,6 @@ const MOSCOW_LON = 37.6173;
 export const getWeatherData = async (days: number): Promise<WeatherData[]> => {
   try {
     const cnt = Math.min(Math.ceil(days * 8), 40);
-
-    console.log("Requesting weather data with params:", {
-      lat: MOSCOW_LAT,
-      lon: MOSCOW_LON,
-      units: "metric",
-      cnt,
-      // Не выводим API_KEY в консоль для безопасности
-    });
 
     const response = await axios.get<WeatherApiResponse>(
       `${BASE_URL}/forecast`,

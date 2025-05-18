@@ -5,6 +5,7 @@ import type { User, LoginCredentials } from "../types/user.types";
 
 interface AuthContextType {
   user: User | null;
+  isLoggingOut: boolean;
   login: (credentials: LoginCredentials) => Promise<void>;
   logout: () => void;
 }
@@ -18,6 +19,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
   });
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const login = async (credentials: LoginCredentials) => {
     const users = JSON.parse(localStorage.getItem("users") || "[]");
@@ -33,6 +35,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         isAuthenticated: true,
       };
       setUser(authUser);
+      setIsLoggingOut(false);
       localStorage.setItem("user", JSON.stringify(authUser));
       message.success("Вход выполнен успешно!");
     } else {
@@ -42,6 +45,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
+    setIsLoggingOut(true);
     setUser(null);
     localStorage.removeItem("user");
     message.info("Вы вышли из системы");
@@ -49,7 +53,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <App>
-      <AuthContext.Provider value={{ user, login, logout }}>
+      <AuthContext.Provider value={{ user, isLoggingOut, login, logout }}>
         {children}
       </AuthContext.Provider>
     </App>

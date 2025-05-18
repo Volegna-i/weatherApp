@@ -11,8 +11,11 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { LoginForm } from "./components/auth/LoginForm/LoginForm";
 import { RegisterForm } from "./components/auth/RegisterForm/RegisterForm";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import { PublicRoute } from "./components/auth/PublicRoute";
 import { Header } from "./components/layout/Header/Header";
 import { WeatherDashboard } from "./components/weather/WeatherDashboard/WeatherDashboard";
+import { ForbiddenPage } from "./components/errors/ForbiddenPage";
+import { NotFoundPage } from "./components/errors/NotFoundPage";
 import { store } from "./store/store";
 import { useTheme } from "./hooks/useTheme";
 import styles from "./styles/layout.module.scss";
@@ -42,8 +45,26 @@ function App() {
           <AuthProvider>
             <Router>
               <Routes>
-                <Route path="/login" element={<LoginForm />} />
-                <Route path="/register" element={<RegisterForm />} />
+                {/* Публичные маршруты */}
+                <Route
+                  path="/login"
+                  element={
+                    <PublicRoute>
+                      <LoginForm />
+                    </PublicRoute>
+                  }
+                />
+                <Route
+                  path="/register"
+                  element={
+                    <PublicRoute>
+                      <RegisterForm />
+                    </PublicRoute>
+                  }
+                />
+                <Route path="/403" element={<ForbiddenPage />} />
+
+                {/* Защищенные маршруты */}
                 <Route
                   path="/dashboard"
                   element={
@@ -52,10 +73,15 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
+
+                {/* Редирект с главной */}
                 <Route
                   path="/"
                   element={<Navigate to="/dashboard" replace />}
                 />
+
+                {/* 404 для всех остальных маршрутов */}
+                <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </Router>
           </AuthProvider>
