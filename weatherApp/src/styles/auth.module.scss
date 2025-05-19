@@ -1,4 +1,4 @@
-.loginContainer {
+.authContainer {
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -35,7 +35,31 @@
   }
 }
 
-.registerLink {
+.authForm {
+  :global {
+    .ant-form-item {
+      margin-bottom: 22px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+.errorMessage {
+  color: #ff4d4f;
+  text-align: center;
+  font-size: 14px;
+  margin: -8px 0 16px;
+  transition: all 0.3s;
+  
+  [data-theme='dark'] & {
+    color: #ff7875;
+  }
+}
+
+.authLink {
   display: block;
   text-align: center;
   margin-top: 16px;

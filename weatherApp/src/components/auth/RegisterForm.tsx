@@ -2,21 +2,22 @@ import { useState } from "react";
 import { Form, Input, Button, Card, Typography, App } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
-import { useTheme } from "../../../hooks/useTheme";
-import type { RegisterCredentials } from "../../../types/user.types";
-import styles from "./RegisterForm.module.scss";
+import { useTheme } from "../../hooks/useTheme";
+import type { RegisterCredentials } from "../../types/user.types";
+import styles from "../../styles/auth.module.scss";
 
 const { Title, Text } = Typography;
 
 export const RegisterForm = () => {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { themeMode } = useTheme();
   const { message } = App.useApp();
   const navigate = useNavigate();
-  
 
   const onFinish = async (values: RegisterCredentials) => {
     setLoading(true);
+    setError(null);
     try {
       const users = JSON.parse(localStorage.getItem("users") || "[]");
       const userExists = users.some(
@@ -24,7 +25,7 @@ export const RegisterForm = () => {
       );
 
       if (userExists) {
-        message.error("Такой пользователь уже существует!");
+        setError("Такой пользователь уже существует!");
         return;
       }
 
@@ -41,17 +42,24 @@ export const RegisterForm = () => {
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "Регистрация не удалась!";
-      message.error(errorMessage);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className={styles.registerContainer} data-theme={themeMode}>
+    <div className={styles.authContainer} data-theme={themeMode}>
       <Card>
         <Title level={2}>Регистрация</Title>
-        <Form name="register" onFinish={onFinish} layout="vertical">
+        <Form
+          name="register"
+          onFinish={onFinish}
+          layout="vertical"
+          className={styles.authForm}
+        >
+          {error && <div className={styles.errorMessage}>{error}</div>}
+
           <Form.Item
             name="username"
             rules={[
@@ -59,11 +67,7 @@ export const RegisterForm = () => {
               { min: 3, message: "Логин должен содержать минимум 3 символа!" },
             ]}
           >
-            <Input
-              prefix={<UserOutlined />}
-              placeholder="Логин"
-              size="large"
-            />
+            <Input prefix={<UserOutlined />} placeholder="Логин" size="large" />
           </Form.Item>
 
           <Form.Item
@@ -117,7 +121,7 @@ export const RegisterForm = () => {
             </Button>
           </Form.Item>
 
-          <Text className={styles.loginLink}>
+          <Text className={styles.authLink}>
             Уже есть аккаунт? <Link to="/login">Авторизироваться</Link>
           </Text>
         </Form>

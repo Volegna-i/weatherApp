@@ -2,6 +2,7 @@ import { createContext, useState } from "react";
 import type { ReactNode } from "react";
 import { message, App } from "antd";
 import type { User, LoginCredentials } from "../types/user.types";
+import { AuthError } from "../types/error.types";
 
 interface AuthContextType {
   user: User | null;
@@ -23,25 +24,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (credentials: LoginCredentials) => {
     const users = JSON.parse(localStorage.getItem("users") || "[]");
-    const user = users.find(
-      (u: { username: string; password: string }) =>
-        u.username === credentials.username &&
-        u.password === credentials.password
+
+    // Проверяем существование пользователя
+    const existingUser = users.find(
+      (u: { username: string }) => u.username === credentials.username
     );
 
-    if (user) {
-      const authUser = {
-        username: credentials.username,
-        isAuthenticated: true,
-      };
-      setUser(authUser);
-      setIsLoggingOut(false);
-      localStorage.setItem("user", JSON.stringify(authUser));
-      message.success("Вход выполнен успешно!");
-    } else {
-      message.error("Неверный логин или пароль");
-      throw new Error("Invalid credentials");
+    if (!existingUser) {
+      throw new AuthError("Пользователь не найден", "USER_NOT_FOUND");
     }
+
+    // Проверяем правильность пароля
+    if (existingUser.password !== credentials.password) {
+      throw new AuthError("Неверный пароль", "INVALID_PASSWORD");
+    }
+
+    // Если все проверки пройдены, авторизуем пользователя
+    const authUser = {
+      username: credentials.username,
+      isAuthenticated: true,
+    };
+    setUser(authUser);
+    setIsLoggingOut(false);
+    localStorage.setItem("user", JSON.stringify(authUser));
+    message.success("Вход выполнен успешно!");
   };
 
   const logout = () => {

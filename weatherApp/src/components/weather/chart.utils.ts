@@ -63,7 +63,6 @@ export const getCombinedChartOptions = ({
   visibleDatasets,
 }: ChartTheme): ChartOptions<ChartType> => ({
   responsive: true,
-  // maintainAspectRatio: false,
   interaction: {
     mode: "index",
     intersect: false,

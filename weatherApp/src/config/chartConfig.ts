@@ -20,9 +20,9 @@ ChartJS.register(
   LinearScale,
   PointElement,
   LineElement,
-  LineController, // Добавляем контроллер для линейного графика
+  LineController,
   BarElement,
-  BarController, // Добавляем контроллер для столбчатого графика
+  BarController,
   Title,
   Tooltip,
   Legend,
