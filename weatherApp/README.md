@@ -51,4 +51,4 @@ weatherApp/
 
 ## Деплой
 
-Приложение развернуто на Vercel: [Weather App](https://weather-dnx25yirv-volands-projects-7267ee5e.vercel.app)
+Приложение развернуто на Vercel: [Weather App](https://weather-mel05iac1-volands-projects-7267ee5e.vercel.app)
