@@ -35,25 +35,41 @@
   }
 }
 
+.formHeader {
+  position: relative;
+  transition: transform 0.3s ease;
+  margin-bottom: 24px;
+
+  &.hasError {
+    transform: translateY(-12px);
+  }
+}
+
 .authForm {
   :global {
     .ant-form-item {
       margin-bottom: 22px;
-
-      &:last-child {
-        margin-bottom: 0;
-      }
     }
   }
 }
 
 .errorMessage {
-  color: #ff4d4f;
   text-align: center;
   font-size: 14px;
-  margin: -8px 0 16px;
-  transition: all 0.3s;
+  color: #ff4d4f;
+  position: absolute;
+  width: 100%;
+  bottom: -24px;
+  left: 0;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
   
+  &.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
   [data-theme='dark'] & {
     color: #ff7875;
   }

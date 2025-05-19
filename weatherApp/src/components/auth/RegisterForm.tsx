@@ -51,15 +51,20 @@ export const RegisterForm = () => {
   return (
     <div className={styles.authContainer} data-theme={themeMode}>
       <Card>
-        <Title level={2}>Регистрация</Title>
+        <div className={`${styles.formHeader} ${error ? styles.hasError : ""}`}>
+          <Title level={2}>Регистрация</Title>
+          <div
+            className={`${styles.errorMessage} ${error ? styles.visible : ""}`}
+          >
+            {error}
+          </div>
+        </div>
         <Form
           name="register"
           onFinish={onFinish}
           layout="vertical"
           className={styles.authForm}
         >
-          {error && <div className={styles.errorMessage}>{error}</div>}
-
           <Form.Item
             name="username"
             rules={[

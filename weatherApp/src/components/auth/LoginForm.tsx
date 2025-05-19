@@ -19,7 +19,6 @@ export const LoginForm = () => {
   const onFinish = async (values: { username: string; password: string }) => {
     setLoading(true);
     setError(null);
-
     try {
       await login(values);
       navigate("/dashboard");
@@ -46,15 +45,20 @@ export const LoginForm = () => {
   return (
     <div className={styles.authContainer} data-theme={themeMode}>
       <Card>
-        <Title level={2}>Вход</Title>
+        <div className={`${styles.formHeader} ${error ? styles.hasError : ""}`}>
+          <Title level={2}>Вход</Title>
+          <div
+            className={`${styles.errorMessage} ${error ? styles.visible : ""}`}
+          >
+            {error}
+          </div>
+        </div>
         <Form
           name="login"
           onFinish={onFinish}
           layout="vertical"
           className={styles.authForm}
         >
-          {error && <div className={styles.errorMessage}>{error}</div>}
-
           <Form.Item
             name="username"
             rules={[{ required: true, message: "Пожалуйста, введите логин!" }]}
